@@ -1,0 +1,27 @@
+{
+  "id": "",
+  "type": "",
+  "services": [
+    {
+      "id": "",
+      "type": "",
+      "url": "",
+      "title": "",
+      "capabilities": ""
+    }
+  ],
+  "geometry": {
+    "type": "",
+    "coordinates": [
+      [
+        [
+          0,
+          0
+        ]
+      ]
+    ]
+  },
+  "altitude": "",
+  "provider": "",
+  "timestamp": ""
+}
