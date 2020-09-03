@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/OpenArCloud/ssd-access/issues"
   },
-  "homepage": "https://github.com/OpenArCloud/ssd-access#readme"
+  "homepage": "https://github.com/OpenArCloud/ssd-access#readme",
+  "dependencies": {
+    "ajv": "^6.12.4"
+  }
 }
