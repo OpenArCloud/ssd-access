@@ -37,6 +37,9 @@ AUTH0_AUDIENCE =
 AUTH0_SCOPE = 
 ```
 
+We use in rollup replace to replace the placeholders with the specific values during 
+packaging of the browser app.
+
 
 - function init()
 Instantiate and initialize the auth0 object, used for login/logout and api access
