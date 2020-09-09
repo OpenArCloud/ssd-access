@@ -26,7 +26,17 @@ Validate the provided Spatial Services Record against the SSR json schema
 
 ###Authentication
 
-The spatial discovery services use auth0 for authentication. It uses the spa SDK from auth0.
+The spatial discovery services use auth0 for authentication. It uses the spa SDK from auth0. 
+To use the authentication, create an .env file at the root of your project and add these 
+values:
+
+```
+AUTH0_DOMAIN = 
+AUTH0_CLIENTID = 
+AUTH0_AUDIENCE = 
+AUTH0_SCOPE = 
+```
+
 
 - function init()
 Instantiate and initialize the auth0 object, used for login/logout and api access
