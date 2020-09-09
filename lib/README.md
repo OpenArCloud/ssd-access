@@ -6,7 +6,7 @@ This module will very likely only run in a browser using rollup right now.
 Compatibility with other packagers and with Node on the server side is planned.
 
 
-###Currently available functions are:
+### Currently available functions are:
 - getServicesAtLocation(countryCode, h3Index)
 Requests services available around H3Index from the regional server for the provided 
 countryCode
@@ -24,7 +24,7 @@ Post the content of a .json file to Spatial Services Discovery server of provide
 Validate the provided Spatial Services Record against the SSR json schema 
 
 
-###Authentication
+### Authentication
 
 The spatial discovery services use auth0 for authentication. It uses the spa SDK from auth0. 
 To use the authentication, create an .env file at the root of your project and add these 
@@ -57,11 +57,11 @@ true when client is logged in
 The user record from auth0
 
 
-###New with this version:
+### New with this version:
 - Store for authentication added
 
 
-###More information about the discovery services used can be found here:
+### More information about the discovery services used can be found here:
 
 Spatial Service Discovery
 - https://github.com/OpenArCloud/oscp-spatial-service-discovery/

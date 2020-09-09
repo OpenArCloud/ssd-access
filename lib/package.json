@@ -1,6 +1,6 @@
 {
   "name": "ssd-access",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Access to Spatial Service Discovery of Open Spatial Computing Platform",
   "main": "index.js",
   "type": "module",
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/OpenArCloud/ssd-access#readme",
   "dependencies": {
-    "ajv": "^6.12.4"
+    "ajv": "^6.12.4",
+    "@auth0/auth0-spa-js": "^1.11.0"
   }
 }
