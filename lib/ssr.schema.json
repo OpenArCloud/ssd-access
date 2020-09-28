@@ -39,14 +39,7 @@
           }
         }
       },
-      "required": [ "id", "type", "url", "capabilities"]
-    },
-    "coordinate": {
-      "id": "#coordinate",
-      "type": "array",
-      "items": {
-        "type": "number"
-      }
+      "required": [ "id", "type", "title", "url", "capabilities"]
     }
   },
 
@@ -63,7 +56,8 @@
         "type": "",
         "url": "",
         "title": "",
-        "capabilities": ""
+        "description": "",
+        "capabilities": []
       }],
       "items": {
         "ref": "#service"
@@ -74,34 +68,39 @@
       "properties": {
         "type": {
           "type": "string",
-          "default": ""
+          "enum": [
+            "Polygon"
+          ]
         },
         "coordinates": {
           "type": "array",
           "items": {
             "type": "array",
+            "minItems": 4,
             "items": {
-              "default": [
-                0.0,
-                0.0
-              ],
-              "ref": "#coordinate"
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              }
             }
           }
+        },
+        "bbox": {
+          "type": "array",
+          "minItems": 4,
+          "items": {
+            "type": "number"
+          }
         }
-      }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ]
     },
     "altitude": {
       "type": "number",
-      "default": ""
-    },
-    "provider": {
-      "type": "string",
-      "default": ""
-    },
-    "timestamp": {
-      "type": "string",
-      "format": "date-time",
       "default": ""
     }
   },

@@ -1,27 +1,12 @@
 {
-  "id": "",
-  "type": "",
-  "services": [
-    {
-      "id": "",
-      "type": "",
-      "url": "",
-      "title": "",
-      "capabilities": ""
-    }
-  ],
+  "type": "ssr",
+  "services": [],
   "geometry": {
-    "type": "",
+    "type": "Polygon",
     "coordinates": [
-      [
-        [
-          0,
-          0
-        ]
-      ]
-    ]
+      []
+    ],
+    "bbox": []
   },
-  "altitude": "",
-  "provider": "",
-  "timestamp": ""
+  "altitude": 0
 }
