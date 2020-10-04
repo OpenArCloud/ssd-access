@@ -6,6 +6,11 @@ This module will very likely only run in a browser using rollup right now.
 Compatibility with other packagers and with Node on the server side is planned.
 
 
+### New with this version:
+- searchServicesForTenant() was renamed to searchServicesForProducer()
+- Environment variables for authentication have been renamed
+
+
 ### Currently available functions are:
     getServicesAtLocation(countryCode, h3Index)
 Requests services available around H3Index from the regional server for the provided 
@@ -26,7 +31,7 @@ Send an edited SSR record to the server
     function validateSsr(ssr, fileName = '')
 Validate the provided Spatial Services Record against the SSR json schema 
 
-    function searchServicesForTenant(countryCode, token)
+    function searchServicesForProducer(countryCode, token)
 Request all services for the current tenant in the provided region
 
     function deleteWithId(countryCode, id, token)
@@ -40,10 +45,10 @@ To use the authentication, create an .env file at the root of your project and a
 values:
 
 ```
-AUTH0_DOMAIN = 
-AUTH0_CLIENTID = 
-AUTH0_AUDIENCE = 
-AUTH0_SCOPE = 
+AUTH0_SSD_DOMAIN = 
+AUTH0_SSD_CLIENTID = 
+AUTH0_SSD_AUDIENCE = 
+AUTH0_SSD_SCOPE = 
 ```
 
 We use in rollup replace to replace the placeholders with the specific values during 
@@ -64,12 +69,6 @@ true when client is logged in
 
     user
 The user record from auth0
-
-
-### New with this version:
-- Added official geojson polygon schema to the SSR schema
-- Delete function
--Put function
 
 
 ### More information about the discovery services used can be found here:
