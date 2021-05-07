@@ -1,14 +1,15 @@
 Simple library aiming to make access to the spatial service discovery as 
-easy as possible. Currently verifying if it actually makes sense.
+easy as possible. Currently, verifying if it actually makes sense.
 
 
-This module will very likely only run in a browser using rollup right now. 
+This module will very likely only run in a browser using rollup and snowpack right now. 
 Compatibility with other packagers and with Node on the server side is planned.
 
 
 ### New with this version:
-- searchServicesForTenant() was renamed to searchServicesForProducer()
-- Environment variables for authentication have been renamed
+- Implementing changes from SSD
+- Breaking: Rename service property `capabilities` to `properties`
+- Add new property `active`
 
 
 ### Currently available functions are:

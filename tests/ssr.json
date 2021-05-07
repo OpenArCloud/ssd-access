@@ -7,7 +7,7 @@
       "url": "http://geopose.geo1.example.com",
       "title": "Stadium geopose",
       "description": "Find out where you are and in which direction you're looking",
-      "capabilities": ["geopose", "outside"]
+      "properties": [{"type": "geopose"} , {"value": "outside"}]
     },
     {
       "id": "mv2",
@@ -15,7 +15,7 @@
       "url": "http://content-discovery.geo1.example.com",
       "title": "Stadium content discovery",
       "description": "Find out which content can be placed",
-      "capabilities": ["content", "inside"]
+      "properties": [{"type": "content"}, {"value": "inside"}]
     }
   ],
   "geometry": {

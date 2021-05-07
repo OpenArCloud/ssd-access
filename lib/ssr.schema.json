@@ -5,6 +5,22 @@
   "description": "Spatial Service Record (SSR)",
 
   "definitions": {
+    "property": {
+      "id": "#property",
+      "type": "array",
+      "properties": {
+        "type": {
+          "type": "string",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": ["type", "value"]
+
+    },
     "service": {
       "id": "#service",
       "type": "object",
@@ -31,15 +47,15 @@
           "format": "uri",
           "default": ""
         },
-        "capabilities": {
+        "properties": {
           "type": "array",
           "default": [],
           "items": {
-            "type": "string"
+            "ref": "#property"
           }
         }
       },
-      "required": [ "id", "type", "title", "url", "capabilities"]
+      "required": [ "id", "type", "title", "url"]
     }
   },
 
@@ -57,7 +73,7 @@
         "url": "",
         "title": "",
         "description": "",
-        "capabilities": []
+        "properties": []
       }],
       "items": {
         "ref": "#service"
@@ -102,6 +118,14 @@
     "altitude": {
       "type": "number",
       "default": ""
+    },
+    "provider": {
+      "type": "string",
+      "default": "provider"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
     }
   },
   "required": [ "type", "services", "geometry" ]
