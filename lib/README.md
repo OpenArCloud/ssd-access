@@ -6,7 +6,10 @@ This module will very likely only run in a browser using rollup and snowpack rig
 Compatibility with other packagers and with Node on the server side is planned.
 
 
-### New with this version:
+### New with version 0.2.1:
+- SSD_URL and SSRS_PATH can be set from outside the library
+
+### New with version 0.2.0:
 - Implementing changes from SSD
 - Breaking: Rename service property `capabilities` to `properties`
 - Add new property `active`
