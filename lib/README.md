@@ -18,9 +18,8 @@ Compatibility with other packagers and with Node on the server side is planned.
 
 
 ### Currently available functions are:
-    getServicesAtLocation(countryCode, h3Index)
-Requests services available around H3Index from the regional server for the provided 
-countryCode
+    function getServicesAtLocation(countryCode, h3Index)
+Requests services available around H3Index from the regional server for the provided countryCode
 
     function getServiceWithId(countryCode, id)
 Requests service with provided id from the regional server for the provided countryCode
@@ -46,28 +45,22 @@ Delete the record with the provided id and region
 
 ### Authentication
 
-The spatial discovery services use auth0 for authentication. It uses the spa SDK from auth0. 
-To use the authentication, create an .env file at the root of your project and add these 
-values:
-
+The spatial discovery services use [Auth0](https://auth0.com/) for authentication. This library uses the [single page app SDK](https://auth0.com/docs/libraries/auth0-single-page-app-sdk) from Auth0. In your main application, you can read the Auth0 configuration from a .env file containing these values:
 ```
 AUTH0_SSD_DOMAIN = 
 AUTH0_SSD_CLIENTID = 
 AUTH0_SSD_AUDIENCE = 
 AUTH0_SSD_SCOPE = 
 ```
+and then you can pass these values to this library in the `init` method:
 
-We use in rollup replace to replace the placeholders with the specific values during 
-packaging of the browser app.
-
-
-    function init()
+    function init(auth_domain, auth_client_id, auth_audience, auth_scope))
 Instantiate and initialize the auth0 object, used for login/logout and api access
 
     function login()
     function logout()
 
-    getToken()
+    function getToken()
 Returns the auth0 access token
 
     authenticated
