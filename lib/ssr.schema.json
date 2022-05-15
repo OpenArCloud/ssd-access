@@ -51,7 +51,7 @@
           "type": "array",
           "default": [],
           "items": {
-            "ref": "#property"
+            "$ref": "#property"
           }
         }
       },
@@ -76,7 +76,7 @@
         "properties": []
       }],
       "items": {
-        "ref": "#service"
+        "$ref": "#service"
       }
     },
     "geometry": {
