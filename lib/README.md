@@ -5,11 +5,14 @@ easy as possible. Currently, verifying if it actually makes sense.
 This module will very likely only run in a browser using rollup and snowpack right now. 
 Compatibility with other packagers and with Node on the server side is planned.
 
+### New with version 0.2.4:
+- more countries defined, p2p-master service type defined
+
 ### New with version 0.2.2:
 - Auth0 context must be set from the application that calls this library
 
 ### New with version 0.2.1:
-- SSD_URL and SSRS_PATH can be set from outside the library
+- `SSD_URL` and `SSRS_PATH` can be set from outside the library
 
 ### New with version 0.2.0:
 - Implementing changes from SSD
