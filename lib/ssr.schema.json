@@ -7,7 +7,7 @@
   "definitions": {
     "property": {
       "$id": "#property",
-      "type": "array",
+      "type": "object",
       "properties": {
         "type": {
           "type": "string",
@@ -19,7 +19,6 @@
         }
       },
       "required": ["type", "value"]
-
     },
     "service": {
       "$id": "#service",
