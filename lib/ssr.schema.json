@@ -4,9 +4,8 @@
   "title": "SSR",
   "description": "Spatial Service Record (SSR)",
 
-  "definitions": {
+  "$defs": {
     "property": {
-      "$id": "#property",
       "type": "object",
       "properties": {
         "type": {
@@ -21,7 +20,6 @@
       "required": ["type", "value"]
     },
     "service": {
-      "$id": "#service",
       "type": "object",
       "properties": {
         "id": {
@@ -50,13 +48,14 @@
           "type": "array",
           "default": [],
           "items": {
-            "$ref": "#/definitions/property"
+            "$ref": "#/$defs/property"
           }
         }
       },
       "required": [ "id", "type", "title", "url"]
     }
   },
+
   "type": "object",
   "properties": {
     "type": {
@@ -74,7 +73,7 @@
         "properties": []
       }],
       "items": {
-        "$ref": "#/definitions/service"
+        "$ref": "#/$defs/service"
       }
     },
     "geometry": {
