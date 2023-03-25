@@ -1,6 +1,6 @@
 {
   "name": "@oarc/ssd-access",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Access to Spatial Service Discovery of Open Spatial Computing Platform",
   "main": "index.js",
   "type": "module",

@@ -28,7 +28,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [ "geopose", "content-discovery", "p2p-master" ],
+          "enum": [ "geopose", "content-discovery", "p2p-master", "message-broker"],
           "default": ""
         },
         "title": {

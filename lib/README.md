@@ -5,6 +5,13 @@ easy as possible. Currently, verifying if it actually makes sense.
 This module will very likely only run in a browser using rollup and snowpack right now. 
 Compatibility with other packagers and with Node on the server side is planned.
 
+
+### New with version 0.2.10:
+- message-broker service type defined 
+
+### New with version 0.2.5-9:
+- schema validation updates
+
 ### New with version 0.2.4:
 - more countries defined, p2p-master service type defined
 
