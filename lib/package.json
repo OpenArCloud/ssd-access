@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "tsc",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -25,9 +27,8 @@
   "homepage": "https://github.com/OpenArCloud/ssd-access#readme",
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.21.1",
-    "ajv": "^8.11.0",
-    "ajv-formats": "^2.1.1",
-    "svelte": "^4.2.8"
+    "svelte": "^4.2.8",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "typescript": "^5.3.3"

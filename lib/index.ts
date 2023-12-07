@@ -5,19 +5,103 @@
     Main access point to the spatial discovery services of the Open Spatial Computing Platform.
 */
 
-import ssrSchema from './ssr.schema.json';
-import ssrEmpty from './ssr.empty.json';
 import ssrService from './ssr.service.json';
+import { z } from 'zod';
+export * from './authstore';
 
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats'; // note: introduced in Ajv 8, see https://github.com/ajv-validator/ajv-formats
+export const bBox2dSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
+
+export const bBox3dSchema = z.tuple([z.number(), z.number(), z.number(), z.number(), z.number(), z.number()]);
+
+export const positionSchema = z.array(z.number());
+
+export const geometryTypesSchema = z.union([
+    z.literal('Point'),
+    z.literal('LineString'),
+    z.literal('Polygon'),
+    z.literal('MultiPoint'),
+    z.literal('MultiLineString'),
+    z.literal('MultiPolygon'),
+    z.literal('GeometryCollection'),
+]);
+
+export const bBoxSchema = z.union([bBox2dSchema, bBox3dSchema]);
+
+export const geoJSONObjectSchema = z.object({
+    type: z.string(),
+    bbox: bBoxSchema.optional(),
+});
+
+export const geometryObjectSchema = geoJSONObjectSchema.extend({
+    type: geometryTypesSchema,
+});
+
+export const polygonSchema = geometryObjectSchema.extend({
+    type: z.literal('Polygon'),
+    coordinates: z.array(z.array(positionSchema)),
+});
+
+export const propertySchema = z.object({
+    type: z.string(),
+    value: z.string(),
+});
+
+export const serviceSchema = z.object({
+    id: z.string(),
+    type: z.string(),
+    title: z.string(),
+    description: z.string().optional(),
+    url: z.string().url(),
+    properties: z.array(propertySchema).optional(),
+});
+
+export const ssrSchema = z.object({
+    id: z.string(),
+    type: z.string(),
+    services: z.array(serviceSchema),
+    geometry: polygonSchema,
+    altitude: z.number().optional(),
+    provider: z.string(),
+    timestamp: z.number(),
+    active: z.boolean().optional(),
+});
+
+export type BBox2d = z.infer<typeof bBox2dSchema>;
+export type BBox3d = z.infer<typeof bBox3dSchema>;
+export type Position = z.infer<typeof positionSchema>;
+export type GeometryTypes = z.infer<typeof geometryTypesSchema>;
+export type BBox = z.infer<typeof bBoxSchema>;
+export type GeoJSONObject = z.infer<typeof geoJSONObjectSchema>;
+export type GeometryObject = z.infer<typeof geometryObjectSchema>;
+export type Polygon = z.infer<typeof polygonSchema>;
+export type Property = z.infer<typeof propertySchema>;
+export type Service = z.infer<typeof serviceSchema>;
+export type SSR = z.infer<typeof ssrSchema>;
 
 // Allows to return local JSON response (only for debugging)
 export let local = false;
 
 export const ssr_schema = ssrSchema;
-export const ssr_empty = ssrEmpty;
-export const ssr_service = ssrService;
+export const ssr_empty: SSR = {
+    type: 'ssr',
+    services: [],
+    geometry: {
+        type: 'Polygon',
+        coordinates: [[]],
+    },
+    altitude: 0,
+    provider: '',
+    timestamp: 1702045310772,
+    id: '',
+};
+export const ssr_service: Service = {
+    id: '',
+    type: '',
+    url: '',
+    title: '',
+    description: '',
+    properties: [],
+};
 
 // TODO: this list should be queried from the actual server
 export const supportedCountries = `
@@ -46,21 +130,11 @@ const POST_METHOD = 'post';
 const PUT_METHOD = 'put';
 const DELETE_METHOD = 'delete';
 
-/**
- * Sets the base URL for Spatial Service Discovery
- *
- * @param {string} url  URL for spatial service discovery
- */
-export function setSsdUrl(url) {
+export function setSsdUrl(url: string) {
     ssdUrl = url;
 }
 
-/**
- * Sets the sub-path for Spatial Content Records on the SSD URL
- *
- * @param {string} path  subpath for spatial service records on the SSD
- */
-export function setSsrsPath(path) {
+export function setSsrsPath(path: string) {
     ssrsPath = path;
 }
 
@@ -71,169 +145,116 @@ export function setSsrsPath(path) {
  *
  * When the global variable `local` is set to true, no server access is done, but a local result is returned instead.
  *
- * @param {string} countryCode  Short code for the region (country) to get the services for
- * @param {string} h3Index  Location based on the h3 [grid system]{https://eng.uber.com/h3/}
- * @returns {Promise<SSR[]> | Promise<string>} Server response Promise
  */
-export function getServicesAtLocation(countryCode, h3Index) {
+export async function getServicesAtLocation(countryCode: string, h3Index: string): Promise<SSR[]> {
     if (local) {
-        return Promise.resolve(localServices);
+        return localServices;
     }
 
     if (countryCode === undefined || countryCode === '' || h3Index === undefined || countryCode === '') {
         throw new Error(`Check parameters: ${countryCode} ${h3Index}`);
     }
 
-    return request(`${ssdUrl}/${countryCode}/${ssrsPath}?h3Index=${h3Index}`).then(async (response) => await response.json());
+    const response = await request(`${ssdUrl}/${countryCode}/${ssrsPath}?h3Index=${h3Index}`);
+    return await response.json();
 }
 
 /**
  * Requests the service with the provided id from the provided region
  *
  * When the global variable `local` is set to true, no server access is done, but a local result is returned instead.
- *
- * @param {string} countryCode  Short code for the region (country) to get the services for
- * @param {string} id  ID of a SSR record stored on the regional server
- * @returns {Promise<SSR> | Promise<string>} Server response Promise
  */
-export function getServiceWithId(countryCode, id) {
+export async function getServiceWithId(countryCode: string, id: string): Promise<SSR> {
     if (local) {
-        return Promise.resolve(localService);
+        return localService;
     }
 
     if (id === undefined || id.length < 16) {
         throw new Error(`Check parameters: ${id}`);
     }
 
-    return request(`${ssdUrl}/${countryCode}/${ssrsPath}/${id}`).then(async (response) => await response.json());
+    const response = await request(`${ssdUrl}/${countryCode}/${ssrsPath}/${id}`);
+    return await response.json();
 }
 
 /**
  * Request all services in the provided region.
- *
- * @param {string} countryCode  Short code for the region (country) to get the services for
- * @param {string} token  security token for API access authorization
- * @returns {Promise<SSR[]>}  Array of the services in SSR format
  */
-export function searchServicesForProducer(countryCode, token) {
-    return request(`${ssdUrl}/${countryCode}/provider/${ssrsPath}`, GET_METHOD, '', token)
-        .then((response) => response.json())
-        .then((data) => data);
+export async function searchServicesForProducer(countryCode: string, token: string): Promise<SSR[]> {
+    const response = await request(`${ssdUrl}/${countryCode}/provider/${ssrsPath}`, GET_METHOD, '', token);
+    const data = await response.json();
+    return data;
 }
 
 /**
  * Post a single service record (SSR) to the server in the provided region
  *
  * When the global variable `local` is set to true, no server access is done, but an immediate ok returned.
- *
- * @param {string} countryCode  Short code for the region (country) to get the services for
- * @param {string} ssr  The service record to post
- * @param {string} token  security token for API access authorization
- * @returns {Promise<string>}  Server response Promise
  */
-export function postService(countryCode, ssr, token) {
+export async function postService(countryCode: string, ssr: string, token: string): Promise<string> {
     if (local) {
-        return Promise.resolve('OK');
+        return 'OK';
     }
 
     if (ssr === undefined || ssr.length === 0 || token === undefined || token.length === 0) {
         throw new Error(`Check parameters: ${ssr}, ${token}`);
     }
 
-    return request(`${ssdUrl}/${countryCode}/${ssrsPath}`, POST_METHOD, ssr, token).then(async (response) => await response.text());
+    const response = await request(`${ssdUrl}/${countryCode}/${ssrsPath}`, POST_METHOD, ssr, token);
+    return await response.text();
 }
 
 /**
  * Post the content of a .json file to the server in the provided region
  *
  * Reads the contents of the file, validates it against a json schema and posts it to the server.
- *
- * @param {string} countryCode  Short code for the region (country) to get the services for
- * @param {File} file  The file with the contents in SSR format to post
- * @param {string} token  security token for API access authorization
- * @returns {Promise<string>}  Server response Promise
  */
-export async function postSsrFile(countryCode, file, token) {
-    let content;
-
-    return getFileContent(file)
-        .then((result) => (content = result))
-        .then(() => validateSsr(content, file.name))
-        .then(async () => await postService(countryCode, content, token));
+export async function postSsrFile(countryCode: string, file: File, token: string): Promise<string> {
+    const result = await getFileContent(file);
+    validateSsr(result, file.name);
+    return await postService(countryCode, result, token);
 }
 
 /**
  * Put a single service record (SSR) to the server in the provided region
- *
- * @param {string} countryCode  Short code for the region (country) to get the services for
- * @param {string} ssr  The service record to post
- * @param {string} id  ID of the edited record
- * @param {string} token  security token for API access authorization
- * @returns {Promise<string>}
  */
-export async function putService(countryCode, ssr, id, token) {
+export async function putService(countryCode: string, ssr: string, id: string, token: string): Promise<string> {
     if (local) {
-        return Promise.resolve('OK');
+        return 'OK';
     }
 
     if (ssr === undefined || ssr.length === 0 || id === undefined || id.length === 0 || token === undefined || token.length === 0) {
         throw new Error(`Check parameters: ${ssr}, ${id} ${token}`);
     }
 
-    return request(`${ssdUrl}/${countryCode}/${ssrsPath}/${id}`, PUT_METHOD, ssr, token).then(async (response) => await response.text());
+    const response = await request(`${ssdUrl}/${countryCode}/${ssrsPath}/${id}`, PUT_METHOD, ssr, token);
+    return await response.text();
 }
 
 /**
  * Delete service with provided ID
- *
- * @param {string} countryCode  Short code for the region (country) to get the services for
- * @param {string} id  ID of a SSR record stored on the regional server
- * @param {string} token  security token for API access authorization
- * @returns {Promise<*>}  Server response Promise
  */
-export function deleteWithId(countryCode, id, token) {
-    return request(`${ssdUrl}/${countryCode}/${ssrsPath}/${id}`, DELETE_METHOD, '', token).then(async (response) => await response.text());
+export async function deleteWithId(countryCode: string, id: string, token: string) {
+    const response = await request(`${ssdUrl}/${countryCode}/${ssrsPath}/${id}`, DELETE_METHOD, '', token);
+    return await response.text();
 }
 
 /**
  * Validate the provided SSR against a json schema
- *
- * @param {string} ssr  The SSR record to validate
- * @param {string} fileName  When the SSR record was loaded from a file, the respective file name
- * @returns {Promise<boolean> | Promise<string>}  The validation result or exception message
  */
-export function validateSsr(ssr, fileName = '') {
-    return new Promise((resolve, reject) => {
-        let ajv = new Ajv();
-        addFormats(ajv);
-        let parsed;
-
-        try {
-            parsed = JSON.parse(ssr);
-        } catch (error) {
-            reject(`Unable to parse file content: ${fileName}, ${error}`);
-        }
-
-        let isValid = ajv.validate(ssrSchema, parsed);
-
-        if (isValid) {
-            resolve(isValid);
-        } else {
-            reject(`Validation of ${fileName}: ${ajv.errorsText()}`);
-        }
-    });
+export function validateSsr(scr: string, fileName = '') {
+    try {
+        ssrSchema.parse(JSON.parse(scr));
+        return true;
+    } catch (error) {
+        throw new Error(`Unable to parse file content: ${fileName}, ${error}`);
+    }
 }
 
 /**
  * Executes the actual request
- *
- * @param {string} url  The url to connect to
- * @param {string} method  The rest method to use
- * @param {string} body  The body payload if needed
- * @param {string} token  security token for API access authorization
- * @returns {Promise<string>}  Server response Promise
  */
-function request(url, method = GET_METHOD, body = '', token) {
+async function request(url: string, method = GET_METHOD, body = '', token: string | undefined = undefined) {
     let headers = new Headers();
     headers.append('accept', 'application/vnd.oscp+json; version=1.0;');
     headers.append('content-type', 'application/json');
@@ -242,37 +263,30 @@ function request(url, method = GET_METHOD, body = '', token) {
         headers.append('authorization', `Bearer ${token}`);
     }
 
-    let options = {
+    const options = {
         method: method,
         headers: headers,
+        ...(method === POST_METHOD || method === PUT_METHOD ? { body } : undefined),
     };
 
-    if (method === POST_METHOD || method === PUT_METHOD) {
-        options.body = body;
+    const response = await fetch(url, options);
+    if (!response.ok) {
+        throw new Error(`${await response.text()}, ${response.statusText}`);
     }
-
-    return fetch(url, options).then(async (response) => {
-        if (!response.ok) {
-            throw new Error(`${await response.text()}, ${response.statusText}`);
-        }
-        return response;
-    });
+    return response;
 }
 
 /**
  * Read the contents of the provided text file
- *
- * @param {File} file  The file to read the contents from
- * @returns {Promise<string>}  The file's contents
  */
-function getFileContent(file) {
+function getFileContent(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
         if (file === undefined) {
             reject('Undefined file provided');
         }
 
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
+        reader.onload = () => resolve(reader.result as string);
         reader.onerror = () => {
             reader.abort();
             reject(`Unable to get Content of ${file.name}: ${reader.error}`);
@@ -283,13 +297,13 @@ function getFileContent(file) {
 }
 
 /** Local SSR records for testing */
-export const localServices = [
+export const localServices: SSR[] = [
     {
         id: 'e32ca955c776ecec',
         type: 'ssr',
         services: [
-            { type: 'geopose', url: 'http://geopose.geo1.example.com' },
-            { type: 'content-discovery', url: 'http://content-discovery.geo1.example.com' },
+            { type: 'geopose', url: 'http://geopose.geo1.example.com', id: 'geopose-id', title: 'geopose-title' },
+            { type: 'content-discovery', url: 'http://content-discovery.geo1.example.com', id: 'content-discovery-id', title: 'content-discovery-title' },
         ],
         geometry: {
             type: 'Polygon',
@@ -303,14 +317,14 @@ export const localServices = [
             ],
         },
         provider: 'oscptest',
-        timestamp: '2020-08-12T05:08:10.824Z',
+        timestamp: 1597208890824,
     },
     {
         id: 'e0f25f91555e0fba',
         type: 'ssr',
         services: [
-            { type: 'geopose', url: 'http://geopose.geo1.example.com' },
-            { type: 'content-discovery', url: 'http://content-discovery.geo1.example.com' },
+            { type: 'geopose', url: 'http://geopose.geo1.example.com', id: 'geopose-id', title: 'geopose-title' },
+            { type: 'content-discovery', url: 'http://content-discovery.geo1.example.com', id: 'content-discovery-id', title: 'content-discovery-title' },
         ],
         geometry: {
             type: 'Polygon',
@@ -325,17 +339,17 @@ export const localServices = [
             ],
         },
         provider: 'oscptest',
-        timestamp: '2020-08-12T05:08:36.344Z',
+        timestamp: 1597208916344,
     },
 ];
 
 /** Local SSR record for testing */
-export const localService = {
+export const localService: SSR = {
     id: 'e32ca955c776ecec',
     type: 'ssr',
     services: [
-        { type: 'geopose', url: 'http://geopose.geo1.example.com' },
-        { type: 'content-discovery', url: 'http://content-discovery.geo1.example.com' },
+        { type: 'geopose', url: 'http://geopose.geo1.example.com', id: 'geopose-id', title: 'geopose-title' },
+        { type: 'content-discovery', url: 'http://content-discovery.geo1.example.com', id: 'content-discovery-id', title: 'content-discovery-title' },
     ],
     geometry: {
         type: 'Polygon',
@@ -349,5 +363,5 @@ export const localService = {
         ],
     },
     provider: 'oscptest',
-    timestamp: '2020-08-12T05:08:10.824Z',
+    timestamp: 1597208890824,
 };
