@@ -1,5 +1,7 @@
 /key.pem
 /cert.pem
+/lib/node_modules/
+lib/dist/**
 
 /index.html
 /server.py

@@ -5,8 +5,10 @@
     "type": "Polygon",
     "coordinates": [
       []
-    ],
-    "bbox": []
+    ]
   },
-  "altitude": 0
+  "altitude": 0,
+  "provider": "",
+  "timestamp": 1702045310772,
+  "id": ""
 }

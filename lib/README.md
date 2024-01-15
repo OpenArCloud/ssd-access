@@ -1,13 +1,19 @@
-Simple library aiming to make access to the spatial service discovery as 
-easy as possible. Currently, verifying if it actually makes sense.
+Simple client library for the Open AR Cloud Spatial Service Discovery.
+More information about the discovery services used can be found here:
+
+Spatial Service Discovery
+- [https://github.com/OpenArCloud/oscp-spatial-service-discovery](https://github.com/OpenArCloud/oscp-spatial-service-discovery)
+
+Spatial Content Discovery
+- [https://github.com/OpenArCloud/oscp-spatial-content-discovery](https://github.com/OpenArCloud/oscp-spatial-content-discovery)
 
 
-This module will very likely only run in a browser using rollup and snowpack right now. 
-Compatibility with other packagers and with Node on the server side is planned.
-
+### New with version 0.3.0:
+- **Breaking changes**
+- conversion from JavaScript to TypeScript
 
 ### New with version 0.2.10:
-- message-broker service type defined 
+- message-broker service type defined
 
 ### New with version 0.2.5-9:
 - schema validation updates
@@ -44,7 +50,7 @@ Post the content of a .json file to Spatial Services Discovery server of provide
 Send an edited SSR record to the server
 
     function validateSsr(ssr, fileName = '')
-Validate the provided Spatial Services Record against the SSR json schema 
+Validate the provided Spatial Services Record against the SSR json schema
 
     function searchServicesForProducer(countryCode, token)
 Request all services for the current tenant in the provided region
@@ -57,10 +63,10 @@ Delete the record with the provided id and region
 
 The spatial discovery services use [Auth0](https://auth0.com/) for authentication. This library uses the [single page app SDK](https://auth0.com/docs/libraries/auth0-single-page-app-sdk) from Auth0. In your main application, you can read the Auth0 configuration from a .env file containing these values:
 ```
-AUTH0_SSD_DOMAIN = 
-AUTH0_SSD_CLIENTID = 
-AUTH0_SSD_AUDIENCE = 
-AUTH0_SSD_SCOPE = 
+AUTH0_SSD_DOMAIN =
+AUTH0_SSD_CLIENTID =
+AUTH0_SSD_AUDIENCE =
+AUTH0_SSD_SCOPE =
 ```
 and then you can pass these values to this library in the `init` method:
 
